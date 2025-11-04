@@ -38,3 +38,61 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#backend
+
+# build results
+backend/[Bb]in/
+backend/[Oo]bj/
+backend/[Pp]ublish/
+backend/[Ll]og/
+backend/[Dd]ebug/
+backend/[Rr]elease/
+
+# User-specific files
+backend/*.user
+backend/*.suo
+backend/.vs/
+
+# Test results
+backend/TestResult*/
+backend/TestResults/
+backend/.testResults/
+
+# Tooling
+backend/.ionide/
+backend/.vscode/
+backend/.vsconfig
+
+# Paket dependency manager
+backend/.paket/
+backend/paket-files/
+
+# NuGet
+backend/*.nupkg
+backend/packages/
+backend/*.snupkg
+backend/project.lock.json
+backend/project.fragment.lock.json
+backend/artifacts/
+
+# ASP.NET Scaffolding
+backend/ScaffoldingReadMe.txt
+
+# dotCover / coverage tools
+backend/.coverage
+backend/.coverage.*
+backend/coverage/
+backend/lcov.info
+
+# Backup & temporary files
+backend/~$*
+backend/*.tmp
+backend/*.bak
+backend/*.old
+backend/*.orig
+
+
+#github
+.github/workflows/*.temp
+*.pid.lock
