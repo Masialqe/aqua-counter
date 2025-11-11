@@ -1,24 +1,28 @@
+using Common.Extensions;
+using Common.Handlers;
+using Identity;
 using Microsoft.AspNetCore.Antiforgery;
+using Persistence;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// DI Containers
 builder.Services.AddOpenApi();
+builder.Services.AddEndpoints();
+
+// Add exception handlers
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// Configure logger
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 if (builder.Environment.IsDevelopment())
 {
     // Enable CORS for development environment
-    builder.Services.AddCors(options =>
-    {
-        options.AddDefaultPolicy(policy =>
-        {
-            policy.AllowAnyOrigin()
-                  .AllowCredentials()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-    });
+    builder.Services.AddDevelopmentsCorsSettings();
 }
 
 builder.Services.AddAntiforgery(options =>
@@ -26,6 +30,10 @@ builder.Services.AddAntiforgery(options =>
     options.HeaderName = "X-XSRF-TOKEN";
 });
 
+builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddDatabaseServices(builder.Configuration);
+
+// Build app
 var app = builder.Build();
 
 // Anti forgery middleware
@@ -42,7 +50,11 @@ app.Use(async (context, next) =>
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.ApplyDatabaseMigrations();
 }
 
+app.MapEndpoints();
 app.UseHttpsRedirection();
+app.UseExceptionHandler();
+app.UseIdentityServices();
 app.Run();

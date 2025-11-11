@@ -1,0 +1,51 @@
+services:
+  # ac-servoce:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: ac-backend
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: Development
+  #     ConnectionStrings__DefaultConnection: Host=ac-database;Port=5433;Database=${DATABASE_NAME};Username=${DATABASE_USERNAME};Password=${DATABASE_PASSWORD}
+  #     SECRET_KEY: ${SECRET_KEY}
+  #   ports:
+  #     - "5000:80"
+  #   networks:
+  #     - ac-network
+  #   depends_on:
+  #     - ac-database
+      
+  ac-database:
+    image: postgres:latest
+    container_name: ac-database
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - "5433:5432"
+    networks:
+      - ac-network
+    volumes:
+      - ac-postgres-data:/var/lib/postgresql/data
+  
+  #DEV-ONLY
+  ac-pgadmin:
+    image: dpage/pgadmin4
+    container_name: ac-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - ac-network
+    ports:
+      - "8084:80"
+    depends_on:
+      - ac-database
+
+networks:
+  ac-network:
+    driver: bridge
+
+volumes:
+  ac-postgres-data:
