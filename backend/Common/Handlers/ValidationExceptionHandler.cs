@@ -24,14 +24,12 @@ internal sealed class ValidationExceptionHandler : IExceptionHandler
                 g => g.Select(e => e.ErrorMessage).ToArray()
             );
 
-        string errorsString = "{" + string.Join(", ",
-            errors.Select(kv => $"{kv.Key}: [{string.Join(", ", kv.Value.Select(v => $"\"{v}\""))}]")) + "}";
+        var errorList = errors.SelectMany(kv => kv.Value).ToList();
 
-        var response = ApiResponse.Fail(
-            GeneralErrors.ValidationError(errorsString),
-            StatusCodes.Status400BadRequest
-        );
-
+        var response = ApiResponse.Fail("One or more validation errors occurred.",
+            errorList,
+            StatusCodes.Status400BadRequest);
+            
         await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
         return true;
     }

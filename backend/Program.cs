@@ -4,12 +4,14 @@ using Identity;
 using Microsoft.AspNetCore.Antiforgery;
 using Persistence;
 using Serilog;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // DI Containers
 builder.Services.AddOpenApi();
 builder.Services.AddEndpoints();
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 // Add exception handlers
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();

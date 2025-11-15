@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Common.Responses;
-using Domain.Errors;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace Common.Handlers;
@@ -15,10 +14,7 @@ internal sealed class GlobalExceptionHandler(
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         httpContext.Response.ContentType = "application/json";
 
-        var response = ApiResponse.Fail(
-            GeneralErrors.ApplicationError,
-            StatusCodes.Status500InternalServerError
-        );
+        var response = ApiResponse.ServerError();
 
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response), cancellationToken);
         return true;
