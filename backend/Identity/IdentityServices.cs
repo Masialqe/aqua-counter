@@ -1,5 +1,4 @@
 using System.Text;
-using Common.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +14,11 @@ public static class IdentityExtensions
         services.AddDbContext<IdentityContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddIdentity<ApplicationUser, IdentityRole>()
+        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        {
+            //Dev
+            options.SignIn.RequireConfirmedEmail = false;
+        })
             .AddEntityFrameworkStores<IdentityContext>()
             .AddDefaultTokenProviders();
 

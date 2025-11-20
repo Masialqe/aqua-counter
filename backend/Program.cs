@@ -10,12 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // DI Containers
 builder.Services.AddOpenApi();
+builder.Services.RegisterEndpointHandlers();
 builder.Services.AddEndpoints();
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
+//Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // Add exception handlers
+builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// Add services
+builder.Services.AddApplicationServices();
 
 // Configure logger
 builder.Host.UseSerilog((context, configuration) =>
@@ -27,10 +36,10 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddDevelopmentsCorsSettings();
 }
 
-builder.Services.AddAntiforgery(options =>
-{
-    options.HeaderName = "X-XSRF-TOKEN";
-});
+// builder.Services.AddAntiforgery(options =>
+// {
+//     options.HeaderName = "X-XSRF-TOKEN";
+// });
 
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddDatabaseServices(builder.Configuration);
@@ -39,20 +48,23 @@ builder.Services.AddDatabaseServices(builder.Configuration);
 var app = builder.Build();
 
 // Anti forgery middleware
-var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
-app.Use(async (context, next) =>
-{
-    var tokens = antiforgery.GetAndStoreTokens(context);
-    context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken!,
-        new CookieOptions { HttpOnly = false, SameSite = SameSiteMode.None, Secure = true });
-    await next();
-});
+// var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
+// app.Use(async (context, next) =>
+// {
+//     var tokens = antiforgery.GetAndStoreTokens(context);
+//     context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken!,
+//         new CookieOptions { HttpOnly = false, SameSite = SameSiteMode.None, Secure = true });
+//     await next();
+// });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.ApplyDatabaseMigrations();
+    await app.SeedBaseRolesAsync();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.MapEndpoints();

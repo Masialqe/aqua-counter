@@ -1,6 +1,8 @@
 namespace Common.Abstractions.Interfaces;
 
-public interface IHandler<TRequest, TResponse>
+public interface IHandler { }
+
+public interface IHandler<TRequest, TResponse> : IHandler
 {
-    Task<Result<TResponse>> HandleAsync(TRequest request, CancellationToken cancellationToken);
+    Task<TResponse> HandleAsync(TRequest request, CancellationToken cancellationToken);
 }

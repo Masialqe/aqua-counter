@@ -14,10 +14,22 @@ public sealed class User
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public Guid IdentityId { get; set; }
+    public string IdentityId { get; set; } = string.Empty;
 
     public Address? Address { get; set; }
     public Guid? AddressId { get; set; }
 
     public ICollection<Group> Groups { get; set; } = [];
+
+    public User() { }
+    private User(string email, string name, string surname, string identityId)
+    {
+        Name = name;
+        Email = email;
+        Surname = surname;
+        IdentityId = identityId;
+    }
+
+    public static User Create(string email, string name, string surname, string identityId)
+        => new(email, name, surname, identityId);
 }

@@ -15,8 +15,8 @@ namespace Common.Extensions
             if (adminRole == null)
             {
                 await roleManager.CreateAsync(adminRole = new IdentityRole(Roles.Admin));
-                await roleManager.AddClaimAsync(adminRole, new System.Security.Claims.Claim(ClaimTypes.Permission, Permissions.UserManage));
-                await roleManager.AddClaimAsync(adminRole, new System.Security.Claims.Claim(ClaimTypes.Permission, Permissions.UserRead));
+                await roleManager.AddClaimAsync(adminRole, new System.Security.Claims.Claim(ApplicationClaimTypes.Permission, Permissions.UserManage));
+                await roleManager.AddClaimAsync(adminRole, new System.Security.Claims.Claim(ApplicationClaimTypes.Permission, Permissions.UserRead));
             }
 
             var baseUserRole = await roleManager.FindByNameAsync(Roles.User);
@@ -24,7 +24,7 @@ namespace Common.Extensions
             if (baseUserRole == null)
             {
                 await roleManager.CreateAsync(baseUserRole = new IdentityRole(Roles.User));
-                await roleManager.AddClaimAsync(baseUserRole, new System.Security.Claims.Claim(ClaimTypes.Permission, Permissions.UserRead));
+                await roleManager.AddClaimAsync(baseUserRole, new System.Security.Claims.Claim(ApplicationClaimTypes.Permission, Permissions.UserRead));
             }
         }
     }
